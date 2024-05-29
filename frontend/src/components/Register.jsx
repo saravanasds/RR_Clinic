@@ -11,8 +11,19 @@ const Register = () => {
         setFormData({ ...formData, [name]: value });
     };
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validateEmail(formData.email)) {
+            setMessage('Invalid email format');
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:4000/api/admin/register', {
                 method: 'POST',
@@ -23,8 +34,12 @@ const Register = () => {
             });
 
             const data = await response.json();
-            setMessage(data.message);
-            navigate("/login");
+            if (response.ok) {
+                setMessage(data.message);
+                navigate("/login");
+            } else {
+                setMessage(data.message);
+            }
         } catch (error) {
             setMessage('Server error');
         }

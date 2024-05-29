@@ -21,6 +21,14 @@ const Appointment = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Check for empty fields
+        const { patientName, doctorName, date, time, reason } = formData;
+        if (!patientName || !doctorName || !date || !time || !reason) {
+            setMessage('Please fill this form!');
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:4000/api/appointments/create', {
                 method: 'POST',
@@ -33,6 +41,13 @@ const Appointment = () => {
             const data = await response.json();
             if (response.ok) {
                 setMessage(data.message);
+                setFormData({
+                    patientName: '',
+                    doctorName: '',
+                    date: '',
+                    time: '',
+                    reason: ''
+                });
             } else {
                 setMessage('Error: ' + data.message);
             }
@@ -53,7 +68,7 @@ const Appointment = () => {
             </form>
             {message && <p>{message}</p>}
         </div>
-    )
-}
+    );
+};
 
 export default Appointment;
